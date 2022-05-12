@@ -253,11 +253,13 @@ var atm_day_tint:= Color(0.788235, 0.827451, 1.0, 1.0) setget _set_atm_day_tint
 func _set_atm_day_tint(value: Color) -> void:
 	atm_day_tint = value
 	_resources.sky_material.set_shader_param("_AtmDayTint", atm_day_tint)
+	_update_enviro()
 
 var atm_horizon_light_tint:= Color(1.0, 0.643137, 0.517647, 1.0) setget _set_atm_horizon_light_tint
 func _set_atm_horizon_light_tint(value: Color) -> void:
 	atm_horizon_light_tint = value
 	_resources.sky_material.set_shader_param("_AtmHorizonLightTint", value)
+	_update_enviro()
 
 var atm_enable_moon_scatter_mode: bool = false setget _set_atm_enable_moon_scatter_mode
 func _set_atm_enable_moon_scatter_mode(value: bool) -> void:
@@ -280,6 +282,7 @@ var atm_night_tint:= Color(0.254902, 0.337255, 0.447059) setget _set_atm_night_t
 func _set_atm_night_tint(value: Color) -> void:
 	atm_night_tint = value
 	_set_night_intensity()
+	_update_enviro()
 
 var atm_level_params:= Vector3(1.0, 0.0, 0.0) setget _set_atm_level_params
 func _set_atm_level_params(value: Vector3) -> void:
@@ -659,10 +662,21 @@ func _update_moon_light_energy() -> void:
 	var fade = (1.0 - get_sun_direction().y) + 0.5
 	_moon_light_node.light_energy = l * _resources.sun_moon_curve_fade.interpolate_baked(fade)
 
-# TODO: Add moon scatter mode.
 func _update_enviro() -> void:
-	if _enviro != null && ambient_gradient != null:
-		_enviro.ambient_light_color = ambient_gradient.interpolate(TOD_Util.interpolate_full(get_sun_direction().y))
+	if _enviro != null:
+		var sAlt: float = get_sun_direction().y
+		if ambient_gradient != null:
+			var intensity: float = TOD_Math.lerp_p(1.0, get_atm_night_intensity(), TOD_Math.saturate(-sAlt + 0.60))
+			_enviro.ambient_light_color = ambient_gradient.interpolate(
+				TOD_Util.interpolate_full(get_sun_direction().y)) * intensity
+		else:
+			var a = TOD_Math.saturate(1.0 - sAlt)
+			var b = TOD_Math.saturate(-sAlt + 0.60)
+			
+			var colA:= TOD_Math.lerp_p_color(atm_day_tint*0.5, atm_horizon_light_tint, a)
+			var colB:= TOD_Math.lerp_p_color(colA, atm_night_tint * get_atm_night_intensity(), b)
+			
+			_enviro.ambient_light_color = colB
 
 # **** Editor Properties ****
 func _get_property_list() -> Array:
