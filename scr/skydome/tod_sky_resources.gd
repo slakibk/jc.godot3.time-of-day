@@ -16,10 +16,10 @@ var near_space_material:= ShaderMaterial.new()
 var moon_material:= ShaderMaterial.new()
 
 # Shaders.
-const sky_shader: Shader = preload("res://addons/jc.godot3.time-of-day/scr/shaders/sky.gdshader")
-const per_vertex_sky_shader: Shader = preload("res://addons/jc.godot3.time-of-day/scr/shaders/per_vertex_sky.gdshader")
-const near_space_shader: Shader = preload("res://addons/jc.godot3.time-of-day/scr/shaders/near_space.gdshader")
-const moon_shader: Shader = preload("res://addons/jc.godot3.time-of-day/scr/shaders/moon.gdshader")
+const sky_shader: Shader = preload("res://addons/jc.godot3.time-of-day/scr/shaders/sky.shader")
+const per_vertex_sky_shader: Shader = preload("res://addons/jc.godot3.time-of-day/scr/shaders/per_vertex_sky.shader")
+const near_space_shader: Shader = preload("res://addons/jc.godot3.time-of-day/scr/shaders/near_space.shader")
+const moon_shader: Shader = preload("res://addons/jc.godot3.time-of-day/scr/shaders/moon.shader")
 
 # Scenes.
 const moon_render: PackedScene = preload("res://addons/jc.godot3.time-of-day/content/resources/moon/MoonRender.tscn")
