@@ -25,6 +25,9 @@ func check_moon_instance() -> bool:
 		return false
 	return true
 
+var _init_properties_ok: bool = false
+signal is_day(value)
+
 # **** Global ****
 var sky_visible: bool = true setget _set_sky_visible
 func _set_sky_visible(value: bool) -> void:
@@ -173,7 +176,6 @@ func _set_moon_texture(value: Texture) -> void:
 	moon_texture = value
 	_resources.moon_material.set_shader_param("_Texture", value)
 
-var _init_properties_ok: bool = false
 var moon_resolution: int = TOD_Enums.Resolution.R128 setget _set_moon_resolution
 func _set_moon_resolution(value: int) -> void:
 	moon_resolution = value
@@ -223,6 +225,8 @@ func _set_moon_light_path(value: NodePath) -> void:
 var _moon_light_node: DirectionalLight = null
 var _moon_light_ready: bool = false
 var _moon_light_altitude_mult: float = 0.0
+
+var _light_enable: bool
 
 # **** Atmosphere ****
 var atm_quality: int = TOD_Enums.AtmosphereQuality.PerPixel setget _set_atm_quality
@@ -359,7 +363,6 @@ func _set_set_background_texture(value: bool) -> void:
 		_set_background_texture(_resources.background_texture)
 	
 	property_list_changed_notify()
-	
 
 var background_texture: Texture = null setget _set_background_texture
 func _set_background_texture(value: Texture) -> void:
@@ -394,6 +397,23 @@ var stars_scintillation_speed: float = 0.01 setget _set_stars_scintillation_spee
 func _set_stars_scintillation_speed(value: float) -> void:
 	stars_scintillation_speed = value
 	_resources.sky_material.set_shader_param("_StarsScintillationSpeed", value)
+
+
+# **** Environment ****
+var _enviro: Environment = null
+var enviro_container: NodePath setget _set_enviro_container
+func _set_enviro_container(value: NodePath) -> void:
+	enviro_container = value
+	if value != null:
+		var container = get_node_or_null(value)
+		if container is Camera || container is WorldEnvironment:
+			_enviro = container.environment
+			print(_enviro)
+
+var ambient_gradient: Gradient = null setget _set_ambient_gradient
+func _set_ambient_gradient(value: Gradient) -> void:
+	ambient_gradient = value
+	_update_enviro()
 
 func _init() -> void:
 	_resources.setup_render_priority(-126)
@@ -492,9 +512,12 @@ func _init_properties() -> void:
 	
 	_set_stars_scintillation(stars_scintillation)
 	_set_stars_scintillation_speed(stars_scintillation_speed)
+	
+	# Enviro.
+	_set_enviro_container(enviro_container)
+	_set_ambient_gradient(ambient_gradient)
 
 func _set_color_correction_params() -> void:
-	
 	var param: Vector2
 	param.x = tonemap
 	param.y = exposure
@@ -549,6 +572,7 @@ func _set_sun_coords() -> void:
 	_update_sun_light_color()
 	_update_sun_light_energy()
 	_update_moon_light_energy()
+	_update_enviro()
 
 func _set_moon_coords() -> void:
 	var azimuth: float = moon_azimuth * TOD_Math.DEG_TO_RAD
@@ -582,8 +606,7 @@ func _set_moon_coords() -> void:
 	_set_night_intensity()
 	_set_moon_light_color(moon_light_color)
 	_update_moon_light_energy()
-
-signal is_day(value)
+	_update_enviro()
 
 func _set_day_state(v: float, threshold: float = 1.80) -> void:
 	if abs(v) > threshold:
@@ -606,7 +629,7 @@ func _set_night_intensity() -> void:
 	_resources.sky_material.set_shader_param("_AtmNightTint", tint)
 	_set_atm_moon_mie_intensity(atm_moon_mie_intensity)
 
-var _light_enable: bool
+
 func _evaluate_light_enable() -> void:
 	if _sun_light_ready:
 		_light_enable = _sun_light_node.light_energy > 0.0
@@ -635,6 +658,11 @@ func _update_moon_light_energy() -> void:
 	
 	var fade = (1.0 - get_sun_direction().y) + 0.5
 	_moon_light_node.light_energy = l * _resources.sun_moon_curve_fade.interpolate_baked(fade)
+
+# TODO: Add moon scatter mode.
+func _update_enviro() -> void:
+	if _enviro != null && ambient_gradient != null:
+		_enviro.ambient_light_color = ambient_gradient.interpolate(TOD_Util.interpolate_full(get_sun_direction().y))
 
 # **** Editor Properties ****
 func _get_property_list() -> Array:
@@ -724,5 +752,9 @@ func _get_property_list() -> Array:
 		ret.push_back({name = "stars_field_texture", type=TYPE_OBJECT, hint=PROPERTY_HINT_RESOURCE_TYPE, hint_string="Texture"})
 	ret.push_back({name = "stars_scintillation", type=TYPE_REAL, hint=PROPERTY_HINT_RANGE, hint_string="0.0, 1.0"})
 	ret.push_back({name = "stars_scintillation_speed", type=TYPE_REAL})
+	
+	ret.push_back({name = "Environment", type=TYPE_NIL, usage=PROPERTY_USAGE_GROUP})
+	ret.push_back({name = "enviro_container", type=TYPE_NODE_PATH})
+	ret.push_back({name = "ambient_gradient", type=TYPE_OBJECT, hint=PROPERTY_HINT_RESOURCE_TYPE, hint_string="Gradient"})
 	
 	return ret

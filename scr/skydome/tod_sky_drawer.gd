@@ -27,7 +27,7 @@ func check_instance() -> bool:
 #var _world: World = null
 #var _mesh: Mesh = null
 #var _transform:= Transform(TOD_Const.DEFAULT_BASIS, Vector3.ZERO)
-var _transform:= Transform()
+var _transform:= Transform(TOD_Const.DEFAULT_BASIS, Vector3.ZERO)
 
 # **** Clear ****
 func _notification(what: int) -> void:
