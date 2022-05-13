@@ -56,19 +56,10 @@ func set_visible(value: bool) -> void:
 	if check_instance():
 		VS.instance_set_visible(_instance, value)
 
-#func set_world(world: World) -> void:
-#	_world = world
-#	print(_world)
-
-#func enter_world() -> void:
-#	if check_instance():
-#		VS.instance_set_scenario(_instance, _world.scenario)
-#		print("EnterWorld")
-
-#func exit_world() -> void:
-#	if check_instance():
-#		VS.instance_set_scenario(_instance, RID())
-#		print("ExitWorld")
+func set_origin(value: Vector3) -> void:
+	if check_instance():
+		_transform.origin = value
+		VS.instance_set_transform(_instance, _transform)
 
 func set_layers(layers: int) -> void:
 	if check_instance():
@@ -114,7 +105,18 @@ func get_direction() -> Vector3:
 func get_direction_by_rotation() -> Vector3:
 	return -(_transform.basis * Vector3.FORWARD)
 
-
-
 """
+func set_world(world: World) -> void:
+	_world = world
+	print(_world)
+
+func enter_world() -> void:
+	if check_instance():
+		VS.instance_set_scenario(_instance, _world.scenario)
+		print("EnterWorld")
+
+func exit_world() -> void:
+	if check_instance():
+		VS.instance_set_scenario(_instance, RID())
+		print("ExitWorld")
 """

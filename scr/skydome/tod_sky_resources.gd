@@ -14,12 +14,15 @@ var dome_mesh:= SphereMesh.new()
 var sky_material:= ShaderMaterial.new()
 var near_space_material:= ShaderMaterial.new()
 var moon_material:= ShaderMaterial.new()
+var fog_material:= ShaderMaterial.new()
 
 # Shaders.
 const sky_shader: Shader = preload("res://addons/jc.godot3.time-of-day/scr/shaders/sky.shader")
 const per_vertex_sky_shader: Shader = preload("res://addons/jc.godot3.time-of-day/scr/shaders/per_vertex_sky.shader")
 const near_space_shader: Shader = preload("res://addons/jc.godot3.time-of-day/scr/shaders/near_space.shader")
 const moon_shader: Shader = preload("res://addons/jc.godot3.time-of-day/scr/shaders/moon.shader")
+const fog_shader: Shader = preload("res://addons/jc.godot3.time-of-day/scr/shaders/atmospheric_fog.shader")
+
 
 # Scenes.
 const moon_render: PackedScene = preload("res://addons/jc.godot3.time-of-day/content/resources/moon/MoonRender.tscn")
@@ -38,10 +41,14 @@ func _init() -> void:
 func setup_shaders() -> void:
 	sky_material.shader = sky_shader
 	near_space_material.shader = near_space_shader
+	fog_material.shader = fog_shader
 
 func setup_render_priority(value: int) -> void:
 	sky_material.render_priority = value
 	near_space_material.render_priority = value + 1
+
+func setup_fog_render_priority(value: int) -> void:
+	fog_material.render_priority = value
 
 func setup_moon_resources() -> void:
 	moon_material.shader = moon_shader

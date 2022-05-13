@@ -60,7 +60,3 @@ static func get_partial_mie_phase(g: float) -> Vector3:
 	ret.z = 2.0 * g
 	
 	return ret
-
-
-"""
-"""

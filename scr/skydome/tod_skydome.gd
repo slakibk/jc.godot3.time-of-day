@@ -12,6 +12,7 @@ var _resources:= TOD_SkyResources.new()
 # **** Instances ****
 var _near_space_instance:= TOD_SkyDrawer.new()
 var _sky_instance:= TOD_SkyDrawer.new()
+var _fog_instance:= TOD_SkyDrawer.new()
 
 # Moon instance.
 var _moon_instance: Viewport = null
@@ -243,22 +244,26 @@ var atm_darkness: float = 0.7 setget _set_atm_darkness
 func _set_atm_darkness(value: float) -> void:
 	atm_darkness = value
 	_resources.sky_material.set_shader_param("_AtmDarkness", value)
+	_resources.fog_material.set_shader_param("_AtmDarkness", value)
 
 var atm_sun_intensity: float = 30.0 setget _set_atm_sun_intensity
 func _set_atm_sun_intensity(value: float) -> void:
 	atm_sun_intensity = value
 	_resources.sky_material.set_shader_param("_AtmSunIntensity", value)
+	_resources.fog_material.set_shader_param("_AtmSunIntensity", value)
 
 var atm_day_tint:= Color(0.788235, 0.827451, 1.0, 1.0) setget _set_atm_day_tint
 func _set_atm_day_tint(value: Color) -> void:
 	atm_day_tint = value
-	_resources.sky_material.set_shader_param("_AtmDayTint", atm_day_tint)
+	_resources.sky_material.set_shader_param("_AtmDayTint", value)
+	_resources.fog_material.set_shader_param("_AtmDayTint", value)
 	_update_enviro()
 
 var atm_horizon_light_tint:= Color(1.0, 0.643137, 0.517647, 1.0) setget _set_atm_horizon_light_tint
 func _set_atm_horizon_light_tint(value: Color) -> void:
 	atm_horizon_light_tint = value
 	_resources.sky_material.set_shader_param("_AtmHorizonLightTint", value)
+	_resources.fog_material.set_shader_param("_AtmHorizonLightTint", value)
 	_update_enviro()
 
 var atm_enable_moon_scatter_mode: bool = false setget _set_atm_enable_moon_scatter_mode
@@ -288,11 +293,13 @@ var atm_level_params:= Vector3(1.0, 0.0, 0.0) setget _set_atm_level_params
 func _set_atm_level_params(value: Vector3) -> void:
 	atm_level_params = value
 	_resources.sky_material.set_shader_param("_AtmLevelParams", value)
+	_set_fog_atm_level_params_offset(fog_atm_level_params_offset)
 
 var atm_thickness: float = 1.0 setget _set_atm_thickness
 func _set_atm_thickness(value: float) -> void:
 	atm_thickness = value
 	_resources.sky_material.set_shader_param("_AtmThickness", value)
+	_resources.fog_material.set_shader_param("_AtmThickness", value)
 
 var atm_mie: float = 0.07 setget _set_atm_mie
 func _set_atm_mie(value: float) -> void:
@@ -308,33 +315,97 @@ var atm_sun_mie_tint:= Color(1.0, 0.858824, 0.717647, 1.0) setget _set_atm_sun_m
 func _set_atm_sun_mie_tint(value: Color) -> void:
 	atm_sun_mie_tint = value
 	_resources.sky_material.set_shader_param("_AtmSunMieTint", value)
+	_resources.fog_material.set_shader_param("_AtmSunMieTint", value)
 
 var atm_sun_mie_intensity: float = 1.0 setget _set_atm_sun_mie_intensity
 func _set_atm_sun_mie_intensity(value: float) -> void:
 	atm_sun_mie_intensity = value
 	_resources.sky_material.set_shader_param("_AtmSunMieIntensity", value)
+	_resources.fog_material.set_shader_param("_AtmSunMieIntensity", value)
 
 var atm_sun_mie_anisotropy: float = 0.8 setget _set_atm_sun_mie_anisotropy
 func _set_atm_sun_mie_anisotropy(value: float) -> void:
 	atm_sun_mie_anisotropy = value
 	var partial = TOD_AtmosphereLib.get_partial_mie_phase(value)
 	_resources.sky_material.set_shader_param("_AtmSunPartialMiePhase", partial)
+	_resources.fog_material.set_shader_param("_AtmSunPartialMiePhase", partial)
 
 var atm_moon_mie_tint:= Color(0.12549, 0.168627, 0.27451) setget _set_atm_moon_mie_tint
 func _set_atm_moon_mie_tint(value: Color) -> void:
 	atm_moon_mie_tint = value
 	_resources.sky_material.set_shader_param("_AtmMoonMieTint", value)
+	_resources.fog_material.set_shader_param("_AtmMoonMieTint", value)
 
 var atm_moon_mie_intensity: float = 0.7 setget _set_atm_moon_mie_intensity
 func _set_atm_moon_mie_intensity(value: float) -> void:
 	atm_moon_mie_intensity = value
 	_resources.sky_material.set_shader_param("_AtmMoonMieIntensity", value * get_atm_moon_phases_mul())
+	_resources.fog_material.set_shader_param("_AtmMoonMieIntensity", value * get_atm_moon_phases_mul())
+	#  _Resources.FogMaterial.SetShaderParam(SkyConst.AtmMoonMieIntensity, value * AtmMoonPhasesMult);
 
 var atm_moon_mie_anisotropy: float = 0.8 setget _set_atm_moon_mie_anisotropy
 func _set_atm_moon_mie_anisotropy(value: float) -> void:
 	atm_moon_mie_anisotropy = value
 	var partial = TOD_AtmosphereLib.get_partial_mie_phase(value)
 	_resources.sky_material.set_shader_param("_AtmMoonPartialMiePhase", partial)
+	_resources.fog_material.set_shader_param("_AtmMoonPartialMiePhase", partial)
+
+# **** Atmospheric Fog ****
+var fog_visible: bool = true setget _set_fog_visible
+func _set_fog_visible(value: bool) -> void:
+	fog_visible = value
+	_fog_instance.set_visible(value)
+
+var fog_atm_level_params_offset:= Vector3(0.0, 0.0, -1.0) setget _set_fog_atm_level_params_offset
+func _set_fog_atm_level_params_offset(value: Vector3) -> void:
+	fog_atm_level_params_offset = value
+	_resources.fog_material.set_shader_param("_AtmLevelParams", value + atm_level_params)
+
+var fog_density: float = 0.00015 setget _set_fog_density
+func _set_fog_density(value: float) -> void:
+	fog_density = value
+	_resources.fog_material.set_shader_param("_FogDensity", value)
+
+var fog_start: float = 0.0 setget _set_fog_start
+func _set_fog_start(value: float) -> void:
+	fog_start = value
+	_resources.fog_material.set_shader_param("_FogStart", value)
+
+var fog_end: float = 1000.0 setget _set_fog_end
+func _set_fog_end(value: float) -> void:
+	fog_end = value
+	_resources.fog_material.set_shader_param("_FogEnd", value)
+
+var fog_rayleigh_depth: float = 0.116 setget _set_fog_rayleigh_depth
+func _set_fog_rayleigh_depth(value: float) -> void:
+	fog_rayleigh_depth = value
+	_resources.fog_material.set_shader_param("_FogRayleighDepth", value)
+
+var fog_mie_depth: float = 0.0001 setget _set_fog_mie_depth
+func _set_fog_mie_depth(value: float) -> void:
+	fog_mie_depth = value
+	_resources.fog_material.set_shader_param("_FogMieDepth", value)
+
+var fog_falloff: float = 3.0 setget _set_fog_falloff
+func _set_fog_falloff(value: float) -> void:
+	fog_falloff = value
+	_resources.fog_material.set_shader_param("_FogFalloff", value)
+
+var fog_layers: int = 524288 setget _set_fog_layers
+func _set_fog_layers(value: int) -> void: 
+	fog_layers = value
+	_fog_instance.set_layers(value)
+
+var fog_render_priority: int = 127 setget _set_fog_render_priority
+func _set_fog_render_priority(value: int) -> void:
+	fog_render_priority = value
+	_resources.setup_fog_render_priority(value)
+
+func get_fog_atm_night_intensity() -> float:
+	if !atm_enable_moon_scatter_mode:
+		return TOD_Math.saturate(-get_sun_direction().y + 0.70)
+	return TOD_Math.saturate(get_moon_direction().y) * get_atm_moon_phases_mul()
+
 
 # **** Deep Space ****
 var deep_space_euler:= Vector3(-0.752, -2.56, 0.0) setget _set_deep_space_euler
@@ -419,9 +490,10 @@ func _set_ambient_gradient(value: Gradient) -> void:
 	_update_enviro()
 
 func _init() -> void:
-	_resources.setup_render_priority(-126)
+	_resources.setup_render_priority(sky_render_priority)
 	_resources.setup_shaders()
 	_resources.setup_moon_resources()
+	_resources.setup_fog_render_priority(fog_render_priority)
 	_force_setup_moon_instances()
 	_resources.sky_material.set_shader_param("_NoiseTex", _resources.stars_field_noise)
 
@@ -430,11 +502,13 @@ func _notification(what: int) -> void:
 		NOTIFICATION_ENTER_TREE:
 			_near_space_instance.draw(get_world(), _resources.full_screen_quad, _resources.near_space_material)
 			_sky_instance.draw(get_world(), _resources.dome_mesh, _resources.sky_material)
+			_fog_instance.draw(get_world(), _resources.full_screen_quad, _resources.fog_material)
 			_build_moon()
 			_init_properties()
 		NOTIFICATION_EXIT_TREE:
 			_near_space_instance.clear()
 			_sky_instance.clear()
+			_fog_instance.clear()
 		NOTIFICATION_READY:
 			_set_sun_coords()
 			_set_moon_coords()
@@ -498,6 +572,18 @@ func _init_properties() -> void:
 	_set_atm_moon_mie_intensity(atm_moon_mie_intensity)
 	_set_atm_moon_mie_anisotropy(atm_moon_mie_anisotropy)
 	
+	# Fog.
+	_set_fog_visible(fog_visible)
+	_set_fog_atm_level_params_offset(fog_atm_level_params_offset)
+	_set_fog_density(fog_density)
+	_set_fog_rayleigh_depth(fog_rayleigh_depth)
+	_set_fog_mie_depth(fog_mie_depth)
+	_set_fog_falloff(fog_falloff)
+	_set_fog_start(fog_start)
+	_set_fog_end(fog_end)
+	_set_fog_layers(fog_layers)
+	_set_fog_render_priority(fog_render_priority)
+	
 	# Deep Space.
 	_set_deep_space_euler(deep_space_euler)
 	_set_deep_space_quat(deep_space_quat)
@@ -525,6 +611,7 @@ func _set_color_correction_params() -> void:
 	param.x = tonemap
 	param.y = exposure
 	_resources.sky_material.set_shader_param("_ColorCorrection", param)
+	_resources.fog_material.set_shader_param("_ColorCorrection", param)
 
 func _build_moon() -> void:
 	_moon_instance = get_node_or_null("MoonInstance") as Viewport
@@ -564,6 +651,7 @@ func _set_sun_coords() -> void:
 	_resources.moon_material.set_shader_param("_SunDirection", get_sun_direction())
 	_resources.near_space_material.set_shader_param("_SunDirection", get_sun_direction())
 	_resources.sky_material.set_shader_param("_SunDirection", get_sun_direction())
+	_resources.fog_material.set_shader_param("_SunDirection", get_sun_direction())
 	
 	if _sun_light_ready:
 		if _sun_light_node.light_energy > 0.0:
@@ -599,6 +687,7 @@ func _set_moon_coords() -> void:
 	_resources.near_space_material.set_shader_param("_MoonMatrix", _moon_transform.basis.inverse())
 	_resources.moon_material.set_shader_param("_SunDirection", get_sun_direction())
 	_resources.sky_material.set_shader_param("_MoonDirection", get_moon_direction())
+	_resources.fog_material.set_shader_param("_MoonDirection", get_moon_direction())
 	
 	if _moon_light_ready:
 		if _moon_light_node.light_energy > 0.0:
@@ -622,16 +711,18 @@ func _set_beta_ray() -> void:
 	var wls = TOD_AtmosphereLib.compute_wavelenghts(atm_wavelenghts, true)
 	var betaRay = TOD_AtmosphereLib.compute_beta_ray(wls)
 	_resources.sky_material.set_shader_param("_AtmBetaRay", betaRay)
+	_resources.fog_material.set_shader_param("_AtmBetaRay", betaRay)
 
 func _set_beta_mie() -> void:
 	var bM = TOD_AtmosphereLib.compute_beta_mie(atm_mie, atm_turbidity)
 	_resources.sky_material.set_shader_param("_AtmBetaMie", bM)
+	_resources.fog_material.set_shader_param("_AtmBetaMie", bM)
 
 func _set_night_intensity() -> void:
 	var tint: Color = atm_night_tint * get_atm_night_intensity()
 	_resources.sky_material.set_shader_param("_AtmNightTint", tint)
 	_set_atm_moon_mie_intensity(atm_moon_mie_intensity)
-
+	_resources.fog_material.set_shader_param("_AtmNightTint", tint * get_fog_atm_night_intensity())
 
 func _evaluate_light_enable() -> void:
 	if _sun_light_ready:
@@ -751,6 +842,18 @@ func _get_property_list() -> Array:
 	ret.push_back({name = "atm_moon_mie_intensity", type=TYPE_REAL})
 	ret.push_back({name = "atm_moon_mie_anisotropy", type=TYPE_REAL, hint=PROPERTY_HINT_RANGE, hint_string="0.0, 0.9999999"})
 	
+	ret.push_back({name = "Atmospheric Fog", type=TYPE_NIL, usage=PROPERTY_USAGE_GROUP})
+	ret.push_back({name = "fog_visible", type=TYPE_BOOL})
+	ret.push_back({name = "fog_atm_level_params_offset", type=TYPE_VECTOR3})
+	ret.push_back({name = "fog_density", type=TYPE_REAL, hint=PROPERTY_HINT_EXP_EASING, hint_string="0.0, 1.0"})
+	ret.push_back({name = "fog_rayleigh_depth", type=TYPE_REAL, hint=PROPERTY_HINT_EXP_EASING, hint_string="0.0, 1.0"})
+	ret.push_back({name = "fog_mie_depth", type= TYPE_REAL, hint=PROPERTY_HINT_EXP_EASING, hint_string="0.0, 1.0"})
+	ret.push_back({name = "fog_falloff", type=TYPE_REAL, hint=PROPERTY_HINT_RANGE, hint_string="0.0, 10.0"})
+	ret.push_back({name = "fog_start", type=TYPE_REAL, hint=PROPERTY_HINT_RANGE, hint_string="0.0, 5000.0"})
+	ret.push_back({name = "fog_end", type=TYPE_REAL, hint=PROPERTY_HINT_RANGE, hint_string="0.0, 5000.0"})
+	ret.push_back({name = "fog_layers", type=TYPE_INT, hint=PROPERTY_HINT_LAYERS_3D_RENDER})
+	ret.push_back({name = "fog_render_priority", type=TYPE_INT})
+	
 	# Deep Space.
 	ret.push_back({name = "DeepSpace", type=TYPE_NIL, usage=PROPERTY_USAGE_GROUP})
 	ret.push_back({name = "deep_space_euler", type=TYPE_VECTOR3})
@@ -767,6 +870,7 @@ func _get_property_list() -> Array:
 	ret.push_back({name = "stars_scintillation", type=TYPE_REAL, hint=PROPERTY_HINT_RANGE, hint_string="0.0, 1.0"})
 	ret.push_back({name = "stars_scintillation_speed", type=TYPE_REAL})
 	
+	# Enviro.
 	ret.push_back({name = "Environment", type=TYPE_NIL, usage=PROPERTY_USAGE_GROUP})
 	ret.push_back({name = "enviro_container", type=TYPE_NODE_PATH})
 	ret.push_back({name = "ambient_gradient", type=TYPE_OBJECT, hint=PROPERTY_HINT_RESOURCE_TYPE, hint_string="Gradient"})
