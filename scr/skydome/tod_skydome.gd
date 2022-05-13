@@ -483,7 +483,6 @@ func _set_enviro_container(value: NodePath) -> void:
 		var container = get_node_or_null(value)
 		if container is Camera || container is WorldEnvironment:
 			_enviro = container.environment
-			print(_enviro)
 
 var ambient_gradient: Gradient = null setget _set_ambient_gradient
 func _set_ambient_gradient(value: Gradient) -> void:

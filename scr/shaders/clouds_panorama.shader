@@ -11,7 +11,7 @@ uniform vec4 _DayColor: hint_color = vec4(1.0);
 uniform vec4 _HorizonColor: hint_color = vec4(1.0);
 uniform vec4 _NightColor: hint_color = vec4(1.0);
 uniform float _Intensity = 1.0;
-uniform vec4 _DiffuseChannel = vec4(1.0, 0.0, 0.0, 0.0);
+uniform vec4 _DensityChannel = vec4(1.0, 0.0, 0.0, 0.0);
 uniform vec4 _AlphaChannel = vec4(0.0, 0.0, 1.0, 0.0);
 
 uniform float _HorizonFadeOffset = 0.1;
@@ -70,13 +70,13 @@ void fragment(){
 	vec4 col = texture(_Texture, EquirectUV(localPos));
 	//col.rgb = ContrastLevel(col.rgb, 0.5);
 	
-	float diffuse = dot(col, _DiffuseChannel) * _Intensity;
+	float density = dot(col, _DensityChannel) * _Intensity;
 	float alpha  = dot(col, _AlphaChannel);
 	
 	vec3 tint = mix(_DayColor.rgb, _HorizonColor.rgb, v_angle_mult.x) ;
 	tint = mix(tint, _NightColor.rgb, v_angle_mult.w);
 	
-	ALBEDO = tint.rgb * diffuse ;
+	ALBEDO = tint.rgb * density;
 	ALPHA = alpha;
 	ALPHA = mix(ALPHA, 0.0, Saturate((-localPos.y+_HorizonFadeOffset) * _HorizonFade));
 }
