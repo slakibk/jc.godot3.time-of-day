@@ -34,6 +34,7 @@ var sky_visible: bool = true setget _set_sky_visible
 func _set_sky_visible(value: bool) -> void:
 	sky_visible = value
 	_sky_instance.set_visible(value)
+	_near_space_instance.set_visible(value)
 
 var tonemap: float = 0.0 setget _set_tonemap
 func _set_tonemap(value: float) -> void:
