@@ -163,7 +163,7 @@ func _get_property_list() -> Array:
 	
 	ret.push_back({name = "Texture", type=TYPE_NIL, usage=PROPERTY_USAGE_GROUP})
 	ret.push_back({name = "diffuse_channel", type=TYPE_INT, hint=PROPERTY_HINT_ENUM, hint_string="Red, Green, Blue, Alpha"})
-	ret.push_back({name = "apha_channel", type=TYPE_INT, hint=PROPERTY_HINT_ENUM, hint_string="Red, Green, Blue, Alpha"})
+	ret.push_back({name = "alpha_channel", type=TYPE_INT, hint=PROPERTY_HINT_ENUM, hint_string="Red, Green, Blue, Alpha"})
 	ret.push_back({name = "panorama", type=TYPE_OBJECT, hint=PROPERTY_HINT_RESOURCE_TYPE, hint_string="Texture"})
 	
 	ret.push_back({name = "Tint", type=TYPE_NIL, usage=PROPERTY_USAGE_GROUP})
