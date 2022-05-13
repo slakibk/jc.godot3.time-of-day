@@ -14,3 +14,7 @@ enum Resolution{
 	R64 = 0,
 	R128, R256, R512, R1024
 }
+
+enum ColorChannel{
+	Red = 0, Green, Blue, Alpha
+}

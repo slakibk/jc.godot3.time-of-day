@@ -1,3 +1,8 @@
+// Description:
+// - Fog atmosphere tinted.
+// License:
+// - J. Cuéllar 2022 MIT License
+// - See: LICENSE File.
 shader_type spatial;
 render_mode blend_mix, depth_draw_never, cull_disabled, unshaded;
 
@@ -207,6 +212,6 @@ void fragment(){
 	fogColor.rgb = TonemapPhoto(fogColor.rgb, _ColorCorrection.y, _ColorCorrection.x);
 	
 	ALBEDO = fogColor.rgb;
-	ALPHA = fogColor.a;
-	//ALPHA = (depthRaw) < 0.999999999999 ? fogColor.a: 0.0; // Exclude sky.
+	//ALPHA = fogColor.a;
+	ALPHA = (depthRaw) < 0.999999999999 ? fogColor.a: 0.0; // Exclude sky.
 }
