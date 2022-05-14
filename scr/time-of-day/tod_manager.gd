@@ -251,7 +251,7 @@ func _compute_simple_moon_coords() -> void:
 
 func _compute_realistic_sun_coords() -> void:
 	## Orbital Elements.
-	_sun_orbital_elements.get_orbital_elements(0, _get_time_scale())
+	_sun_orbital_elements.compute_orbital_elements(0, _get_time_scale())
 	_sun_orbital_elements.M = TOD_Math.rev(_sun_orbital_elements.M)
 	
 	# Mean anomaly in radians.
@@ -334,7 +334,7 @@ func _compute_realistic_sun_coords() -> void:
 
 func _compute_realistic_moon_coords() -> void:
 	## Orbital Elements.
-	_moon_orbital_elements.get_orbital_elements(1, _get_time_scale())
+	_moon_orbital_elements.compute_orbital_elements(1, _get_time_scale())
 	_moon_orbital_elements.N = TOD_Math.rev(_moon_orbital_elements.N)
 	_moon_orbital_elements.w = TOD_Math.rev(_moon_orbital_elements.w)
 	_moon_orbital_elements.M = TOD_Math.rev(_moon_orbital_elements.M)
