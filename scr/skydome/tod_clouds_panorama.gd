@@ -79,6 +79,10 @@ func _set_horizon_fade(value: float) -> void:
 	horizon_fade = value
 	_material.set_shader_param("_HorizonFade", value)
 
+var horizon_level: float = 0.0 setget _set_horizon_level
+func _set_horizon_level(value: float) -> void:
+	horizon_level = value
+	_material.set_shader_param("_HorizonLevel", value)
 
 var layers: int = 4 setget _set_layers
 func _set_layers(value: int) -> void:
@@ -91,7 +95,6 @@ func _set_render_priority(value: int) -> void:
 	_material.render_priority = value
 
 var rotation_speed: float = 0.002
-
 
 func _init() -> void:
 	_mesh.radial_segments = 16
@@ -122,6 +125,7 @@ func _init_props() -> void:
 	_set_night_color(night_color)
 	_set_horizon_fade_offset(horizon_fade_offset)
 	_set_horizon_fade(horizon_fade)
+	_set_horizon_level(horizon_level)
 	_set_layers(layers)
 	_set_intensity(intensity)
 
@@ -176,5 +180,6 @@ func _get_property_list() -> Array:
 	ret.push_back({name = "Horizon", type=TYPE_NIL, usage=PROPERTY_USAGE_GROUP})
 	ret.push_back({name = "horizon_fade_offset", type=TYPE_REAL})
 	ret.push_back({name = "horizon_fade", type=TYPE_REAL})
+	ret.push_back({name = "horizon_level", type=TYPE_REAL})
 	
 	return ret

@@ -11,11 +11,13 @@ uniform vec4 _DayColor: hint_color = vec4(1.0);
 uniform vec4 _HorizonColor: hint_color = vec4(1.0);
 uniform vec4 _NightColor: hint_color = vec4(1.0);
 uniform float _Intensity = 1.0;
+uniform float _Density = 1.0;
 uniform vec4 _DensityChannel = vec4(1.0, 0.0, 0.0, 0.0);
 uniform vec4 _AlphaChannel = vec4(0.0, 0.0, 1.0, 0.0);
 
 uniform float _HorizonFadeOffset = 0.1;
 uniform float _HorizonFade = 5.0;
+uniform float _HorizonLevel = 0.0;
 
 uniform vec3 _SunDirection;
 uniform vec3 _MoonDirection;
@@ -56,6 +58,7 @@ vec2 EquirectUV(vec3 norm){
 varying vec4 v_angle_mult;
 void vertex(){
 	vec4 vert = vec4(VERTEX, 0.0);
+	vert.y += _HorizonLevel;
 	POSITION =  PROJECTION_MATRIX * INV_CAMERA_MATRIX * WORLD_MATRIX * vert;
 	POSITION.z = POSITION.w;
 	//v_world_pos = WORLD_MATRIX * vert;
