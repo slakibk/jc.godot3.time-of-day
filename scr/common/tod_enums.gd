@@ -18,3 +18,8 @@ enum Resolution{
 enum ColorChannel{
 	Red = 0, Green, Blue, Alpha
 }
+
+enum CelestialCalcMode{
+	Simple = 0,
+	Realistic
+}

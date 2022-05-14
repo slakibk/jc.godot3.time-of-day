@@ -151,6 +151,47 @@ vec3 AtmosphericScattering(float sr, float sm, vec2 mu, vec3 mult){
 	return (scatter * lcol) + nscatter;
 }
 
+/*vec3 AtmosphericScattering(float sr, float sm, vec2 mu, vec3 mult){
+	vec3 betaMie = _AtmBetaMie;
+	vec3 betaRay = _AtmBetaRay * _AtmThickness;
+	vec3 sray = ((_AtmDayTint.rgb * 0.00003) * _AtmThickness);
+	
+	//vec3 extcFactor = SaturateRGB(exp(-(betaRay * sr + betaMie * sm)));
+	vec3 extcFactor = SaturateRGB(exp(-(sray * sr + betaMie * sm)));
+	//
+	//extcFactor *= (-_AtmDayTint.rgb * _AtmThickness * sr)*0.05;
+	//extcFactor = vec3((extcFactor.r + extcFactor.g + extcFactor.b) * 0.3333333);
+	float extcFF = mix(Saturate(_AtmThickness * 0.5), 1.0, mult.x);
+	vec3 finalExtcFactor = mix(1.0 - extcFactor, (1.0 - extcFactor) * extcFactor, extcFF);
+	
+	float rayleighPhase = RayleighPhase(mu.x);
+	vec3 BRT = sray * rayleighPhase;
+	
+	vec3 BMT = betaMie * MiePhase(mu.x, _AtmSunPartialMiePhase);
+	BMT *= _AtmSunMieIntensity * _AtmSunMieTint.rgb;
+	
+	
+	vec3 BRMT = (BRT + BMT) / (sray + betaMie);
+	//BRMT = vec3( (BRMT.r + BRMT.g + BRMT.b) * 0.3333333);
+	
+	//BRMT = vec3((BRMT.r + BRMT.g + BRMT.b) * 0.3333333);
+	//vec3 scatter = _AtmSunIntensity * (BRMT * finalExtcFactor);
+	
+	//scatter *= mult.y; //_AtmDayTint.rgb * mult.y;
+	vec3 scatter = _AtmSunIntensity  * (BRMT * finalExtcFactor) * mult.y;
+	scatter = mix(scatter, scatter * (1.0 - extcFactor), _AtmDarkness);
+	
+	vec3 lcol = mix(_AtmDayTint.rgb, _AtmHorizonLightTint.rgb, mult.x);
+	vec3 nscatter = (1.0 - extcFactor) * _AtmNightTint.rgb;
+	nscatter += MiePhase(mu.y, _AtmMoonPartialMiePhase) * 
+		_AtmMoonMieTint.rgb * _AtmMoonMieIntensity * 0.005;
+	
+	nscatter = mix(nscatter, nscatter * (1.0 - extcFactor), _AtmDarkness);
+
+	
+	return (scatter * lcol) + nscatter;
+}*/
+
 varying vec4 v_world_pos;
 varying vec3 v_deep_space_coords;
 varying vec4 v_angle_mult;
