@@ -209,7 +209,7 @@ func _set_moon_light_color(value: Color) -> void:
 	if _moon_light_ready:
 		_moon_light_node.light_color = value
 
-var moon_light_energy: float = 0.5 setget _set_moon_light_energy
+var moon_light_energy: float = 0.2 setget _set_moon_light_energy
 func _set_moon_light_energy(value: float) -> void:
 	moon_light_energy = value
 	_update_moon_light_energy()
@@ -253,14 +253,14 @@ func _set_atm_sun_intensity(value: float) -> void:
 	_resources.sky_material.set_shader_param("_AtmSunIntensity", value)
 	_resources.fog_material.set_shader_param("_AtmSunIntensity", value)
 
-var atm_day_tint:= Color(0.788235, 0.827451, 1.0, 1.0) setget _set_atm_day_tint
+var atm_day_tint:= Color(0.705882, 0.803922, 0.984314) setget _set_atm_day_tint
 func _set_atm_day_tint(value: Color) -> void:
 	atm_day_tint = value
 	_resources.sky_material.set_shader_param("_AtmDayTint", value)
 	_resources.fog_material.set_shader_param("_AtmDayTint", value)
 	_update_enviro()
 
-var atm_horizon_light_tint:= Color(1.0, 0.643137, 0.517647, 1.0) setget _set_atm_horizon_light_tint
+var atm_horizon_light_tint:= Color(1, 0.839216, 0.517647) setget _set_atm_horizon_light_tint
 func _set_atm_horizon_light_tint(value: Color) -> void:
 	atm_horizon_light_tint = value
 	_resources.sky_material.set_shader_param("_AtmHorizonLightTint", value)
@@ -296,7 +296,7 @@ func _set_atm_level_params(value: Vector3) -> void:
 	_resources.sky_material.set_shader_param("_AtmLevelParams", value)
 	_set_fog_atm_level_params_offset(fog_atm_level_params_offset)
 
-var atm_thickness: float = 1.0 setget _set_atm_thickness
+var atm_thickness: float = 0.7 setget _set_atm_thickness
 func _set_atm_thickness(value: float) -> void:
 	atm_thickness = value
 	_resources.sky_material.set_shader_param("_AtmThickness", value)
@@ -357,7 +357,7 @@ func _set_fog_visible(value: bool) -> void:
 	fog_visible = value
 	_fog_instance.set_visible(value)
 
-var fog_atm_level_params_offset:= Vector3(0.0, 0.0, -1.0) setget _set_fog_atm_level_params_offset
+var fog_atm_level_params_offset:= Vector3(1.0, 0.0, -1.0) setget _set_fog_atm_level_params_offset
 func _set_fog_atm_level_params_offset(value: Vector3) -> void:
 	fog_atm_level_params_offset = value
 	_resources.fog_material.set_shader_param("_AtmLevelParams", value + atm_level_params)

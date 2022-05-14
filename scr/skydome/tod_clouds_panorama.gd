@@ -54,22 +54,22 @@ func _set_day_color(value: Color) -> void:
 	day_color = value
 	_update_color()
 
-var horizon_color:= Color(0.980392, 0.635294, 0.462745, 1.0) setget _set_horizon_color
+var horizon_color:= Color(1, 0.772549, 0.415686, 1.0) setget _set_horizon_color
 func _set_horizon_color(value: Color) -> void:
 	horizon_color = value
 	_update_color()
 
-var night_color:= Color(0.168627, 0.2, 0.25098) setget _set_night_color
+var night_color:= Color(0.082353, 0.164706, 0.32549) setget _set_night_color
 func _set_night_color(value: Color) -> void:
 	night_color = value
 	_update_color()
 
-var intensity: float = 1.3 setget _set_intensity
+var intensity: float = 1.5 setget _set_intensity
 func _set_intensity(value: float) -> void:
 	intensity = value
 	_material.set_shader_param("_Intensity", value)
 
-var horizon_fade_offset: float = 0.1 setget _set_horizon_fade_offset
+var horizon_fade_offset: float = 0.2 setget _set_horizon_fade_offset
 func _set_horizon_fade_offset(value: float) -> void:
 	horizon_fade_offset = value
 	_material.set_shader_param("_HorizonFadeOffset", value)
