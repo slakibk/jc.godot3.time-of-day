@@ -102,6 +102,7 @@ func _notification(what: int) -> void:
 	match(what):
 		NOTIFICATION_ENTER_TREE:
 			_instance.draw(get_world(), _mesh, _material)
+			_instance.set_visible(visible)
 			_init_props()
 		NOTIFICATION_EXIT_TREE:
 			_instance.clear()
