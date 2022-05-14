@@ -67,9 +67,8 @@ void vertex(){
 
 void fragment(){
 	vec3 localPos = normalize(VERTEX).xyz;
-	vec4 col = texture(_Texture, EquirectUV(localPos));
-	//col.rgb = ContrastLevel(col.rgb, 0.5);
-	
+	vec4 col = textureLod(_Texture, EquirectUV(localPos), 0.0);
+
 	float density = dot(col, _DensityChannel) * _Intensity;
 	float alpha  = dot(col, _AlphaChannel);
 	
