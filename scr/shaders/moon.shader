@@ -4,7 +4,7 @@
 // - J. Cuéllar 2022 MIT License
 // - See: LICENSE File.
 shader_type spatial;
-render_mode unshaded;
+render_mode unshaded, async_visible;
 
 uniform sampler2D _Texture;
 uniform vec3 _SunDirection;

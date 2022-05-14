@@ -4,7 +4,8 @@
 // - J. Cuéllar 2022 MIT License
 // - See: LICENSE File.
 shader_type spatial;
-render_mode unshaded, depth_draw_never, cull_front, skip_vertex_transform, blend_mix;
+render_mode unshaded, depth_draw_never, cull_front, 
+skip_vertex_transform, blend_mix, async_visible;
 
 // Uniforms.
 //------------------------------------------------------------------------------

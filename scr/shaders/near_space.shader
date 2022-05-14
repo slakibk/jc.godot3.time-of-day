@@ -4,7 +4,7 @@
 // - J. Cuéllar 2022 MIT License
 // - See: LICENSE File.
 shader_type spatial;
-render_mode unshaded, depth_draw_never, cull_disabled, blend_add;
+render_mode unshaded, depth_draw_never, cull_disabled, blend_add, async_visible;
 
 // Library.
 float Saturate(float value){
