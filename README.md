@@ -9,7 +9,6 @@ Dynamic skydome and ToD plugin for godot engine.
 ------------------------------------
 ![Screenshot](https://raw.githubusercontent.com/7leodev/UniversalSky/main/Screenshots/Screenshot0.jpg)
 
-
 ## Status:
 > 1.1.x dev
 ------------------------------------
@@ -21,19 +20,16 @@ Dynamic skydome and ToD plugin for godot engine.
 > Optimal reflections are possible with a well-configured reflection probe. 
 ------------------------------------
 
-
 ## Limitations: 
-- You can only get reflections with a reflection probe. 
-- The sky model and clouds does not have support for altitude variation. 
+- You can only get sky reflections with a reflection probe. 
 
 ## Future:
 - Currently it is experimental, for godot 4 I will improve the plugin(I will use this plugin in my game)
 
-## Feedback is welcome.
+## Feedback and comments is welcome.
 ------------------------------------
 
 ## Install:
-- Clone or download the repository. 
 - Create a folder called addons in your project. 
-- Download the repository and copy and paste the folder "jc.godot3.time-of-day" into that folder. 
+- Clone the repository into that folder. 
 - Go to Project -> Project Settings -> Plugins and activate the plugin. 
