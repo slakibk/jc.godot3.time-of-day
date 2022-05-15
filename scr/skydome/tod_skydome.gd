@@ -230,6 +230,8 @@ var _moon_light_ready: bool = false
 var _moon_light_altitude_mult: float = 0.0
 
 var _light_enable: bool
+var _sun_light_initial_visible: bool
+var _moon_light_initial_visible: bool
 
 # **** Atmosphere ****
 var atm_quality: int = TOD_Enums.AtmosphereQuality.PerPixel setget _set_atm_quality
@@ -506,10 +508,22 @@ func _notification(what: int) -> void:
 			_fog_instance.draw(get_world(), _resources.full_screen_quad, _resources.fog_material)
 			_build_moon()
 			_init_properties()
+			if _sun_light_ready: 
+				_sun_light_initial_visible = _sun_light_node.visible
+				_sun_light_node.visible = !_sun_light_node.visible
+			if _moon_light_ready:
+				_moon_light_initial_visible = _moon_light_node.visible
+				_moon_light_node.visible = !_moon_light_node.visible
+		
+		NOTIFICATION_POST_ENTER_TREE:
+			if _sun_light_ready: _sun_light_node.visible = _sun_light_initial_visible
+			if _moon_light_ready: _moon_light_node.visible = _moon_light_initial_visible
+		
 		NOTIFICATION_EXIT_TREE:
 			_near_space_instance.clear()
 			_sky_instance.clear()
 			_fog_instance.clear()
+		
 		NOTIFICATION_READY:
 			_set_sun_coords()
 			_set_moon_coords()
