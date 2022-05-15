@@ -56,6 +56,13 @@ func set_visible(value: bool) -> void:
 	if check_instance():
 		VS.instance_set_visible(_instance, value)
 
+func set_layers(layers: int) -> void:
+	if check_instance():
+		VS.instance_set_layer_mask(_instance, layers)
+
+
+# **** Transform ****
+
 func set_origin(value: Vector3) -> void:
 	if check_instance():
 		_transform.origin = value
@@ -66,11 +73,6 @@ func set_origin_offset(value: Vector3) -> void:
 		_transform.origin = _transform.origin + value
 		VS.instance_set_transform(_instance, _transform)
 
-func set_layers(layers: int) -> void:
-	if check_instance():
-		VS.instance_set_layer_mask(_instance, layers)
-
-# **** Transform ****
 
 # Set rotated.
 # - axis

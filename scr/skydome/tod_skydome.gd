@@ -74,6 +74,7 @@ func _set_sky_render_priority(value: int) -> void:
 	sky_render_priority = value
 	_resources.setup_render_priority(value)
 
+
 # **** Near Space ****
 var sun_altitude: float = 68.8916 setget _set_sun_altitude
 func _set_sun_altitude(value: float) -> void:
